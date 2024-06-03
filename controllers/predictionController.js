@@ -20,6 +20,7 @@ const getPredictionHistory = async (req, res) => {
       where: { UserId: req.user.id, deletedAt: null },
       order: [["timestamp", "DESC"]],
     });
+    // res.send(req.user.id);
     res.send(predictions);
   } catch (error) {
     res.status(500).send({ error: error.message });

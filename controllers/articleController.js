@@ -4,7 +4,7 @@ const getArticles = async (req, res) => {
   try {
     const response = await axios.get("https://api.medium.com/v1/articles", {
       params: {
-        tag: "spam, penipuan",
+        tag: "spam-detection",
       },
       headers: {
         Authorization: `Bearer ${process.env.MEDIUM_API_KEY}`,

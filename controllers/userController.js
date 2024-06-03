@@ -1,3 +1,4 @@
+const bcrypt = require("bcrypt");
 const { User } = require("../models");
 
 const getProfile = async (req, res) => {
@@ -32,20 +33,28 @@ const updateProfile = async (req, res) => {
 const changePassword = async (req, res) => {
   try {
     const { oldPassword, newPassword, confirmNewPassword } = req.body;
+
     if (newPassword !== confirmNewPassword) {
       return res.status(400).send({ error: "Passwords do not match" });
     }
 
     const user = await User.findByPk(req.user.id);
-    if (!user || !(await bcrypt.compare(oldPassword, user.password))) {
+    if (!user) {
+      return res.status(404).send({ error: "User not found" });
+    }
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
       return res.status(401).send({ error: "Invalid old password" });
     }
 
     user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
+
     res.send({ message: "Password changed successfully" });
   } catch (error) {
-    res.status(500).send({ error: error.message });
+    console.error(error);
+    res.status(500).send({ error: "Server error" });
   }
 };
 
