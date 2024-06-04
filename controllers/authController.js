@@ -29,6 +29,8 @@ const login = async (req, res) => {
     }
 
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
+
+    res.cookie("token", token, { httpOnly: true });
     res.send({ userId: user.id, token, name: user.name });
   } catch (error) {
     res.status(500).send({ error: error.message });
@@ -37,6 +39,7 @@ const login = async (req, res) => {
 
 const logout = (req, res) => {
   // Handle logout logic here (e.g., token blacklisting if necessary)
+  res.clearCookie("token");
   res.send({ message: "Logout successful" });
 };
 
